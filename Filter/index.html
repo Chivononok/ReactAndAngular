@@ -1,0 +1,28 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+  <meta charset="utf-8" />
+  <title>Filter React</title>
+</head> 
+<body> 
+  <div id="container"></div> 
+      
+  <script src="https://unpkg.com/react@15/dist/react.js"></script> 
+  <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script> 
+      
+  <script src="FilterComponent.js"></script>
+  <link rel="stylesheet" type="text/css" href="FilterComponent.css" />
+
+  <script>
+
+    var wordsArr = ["частнопредпринимательский", "переосвидетельствоавться", "субстанционализироваться", "высокопревосходительство", "одиннадцатиклассница"];
+
+    ReactDOM.render(
+        React.createElement(FilterComponent, {words: wordsArr}), 
+        document.getElementById('container') 
+    );
+
+  </script>
+
+</body> 
+</html>

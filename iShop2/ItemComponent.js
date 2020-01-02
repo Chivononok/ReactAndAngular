@@ -24,9 +24,9 @@ var ItemComponent = React.createClass({
     getClassName: function(){
         //ф-ция возвращает название класса для выделенной строки
         if(this.props.selectedItemName==this.props.nameItem){
-            return "itemComponent_clicked";
+            return "itemComponent_clicked" + " itemComponent_td";
         }else {
-            return null;
+            return " itemComponent_td";
         }
     },
 

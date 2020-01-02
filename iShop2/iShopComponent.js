@@ -38,12 +38,12 @@ var IShopComponent = React.createClass({
         var tableLines = [];
 
         //=== заголовок таблицы ===
-        var header = React.DOM.tr(null,
-            React.DOM.th(null, "Название"),
-            React.DOM.th(null, "Цена"),
-            React.DOM.th(null, "URL картинки"),
-            React.DOM.th(null, "Кол-во на складе"),
-            React.DOM.th(null, "Кнопка")
+        var header = React.DOM.tr({key: 1},
+            React.DOM.th({className: "IShopTableHeadTh"}, "Название"),
+            React.DOM.th({className: "IShopTableHeadTh"}, "Цена"),
+            React.DOM.th({className: "IShopTableHeadTh"}, "URL картинки"),
+            React.DOM.th({className: "IShopTableHeadTh"}, "Кол-во на складе"),
+            React.DOM.th({className: "IShopTableHeadTh"}, "Кнопка")
         );
         tableHeaders.push(header);
         //=========================
@@ -63,12 +63,10 @@ var IShopComponent = React.createClass({
 
         return React.DOM.div({className: "IShopComponent"},
             React.DOM.h1(null, this.props.shopName),   //название магазина
-            React.DOM.table({className:"ItemComponentTable", border: "1"},
-                React.DOM.thead(null, tableHeaders),    //отображаем заголовк таблицы
+            React.DOM.table({className:"IShopTable"},
+                React.DOM.thead({className: "IShopTableHead"}, tableHeaders),    //отображаем заголовк таблицы
                 React.DOM.tbody(null, tableLines)       //отображаем тело таблицы
             ),  
         );
     },
-    
-
 })

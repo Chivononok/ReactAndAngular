@@ -64,7 +64,7 @@ var IShopComponent = React.createClass({
         return React.DOM.div({className: "IShopComponent"},
             React.DOM.h1(null, this.props.shopName),   //название магазина
             React.DOM.table({className:"IShopTable"},
-                React.DOM.thead({className: "IShopTableHead"}, tableHeaders),    //отображаем заголовк таблицы
+                React.DOM.thead(null, tableHeaders),    //отображаем заголовк таблицы
                 React.DOM.tbody(null, tableLines)       //отображаем тело таблицы
             ),  
         );

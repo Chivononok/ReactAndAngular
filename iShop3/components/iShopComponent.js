@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import './iShopComponent.css';
 
 import ItemComponent from './ItemComponent';
+import ItemCardComponent from './ItemCardComponent';
 
 class IShopComponent extends React.Component {
     static PropTypes = {
@@ -14,15 +15,20 @@ class IShopComponent extends React.Component {
     state = {
         shopItems: this.props.items,
         selectedItemName: null,
+        selectedItem: null,
+        actionType: 1,
     }
 
     itemSelected = (itemName) => {
-        //ф-ция вызывается при клике на строку таблицы, выделяет/снимает_выделение со строки
+        //ф-ция вызывается при клике на строку таблицы, выделяет/снимает_выделение со строки и отображает/прячет карточку товара
         if (this.state.selectedItemName==itemName) {
             //повторный клик по выделенной записи снимаает выделение
             this.setState({selectedItemName: null});
+            this.setState({selectedItem: null});
         } else {
             this.setState({selectedItemName: itemName});
+            var selItem = this.getItemByItemName(itemName);
+            this.setState({selectedItem: selItem});
         }
     }
 
@@ -30,9 +36,20 @@ class IShopComponent extends React.Component {
         //ф-ция вызывается при нажатии кнопки Удалить
         var res = confirm("Вы уверены, что хотите удалить запись " + itemName + "?");
         if (res) {
+            if(this.state.selectedItem){
+                if(this.state.selectedItem.nameItem == itemName){
+                    this.setState({selectedItem: null});
+                }
+            }
             var tmpArr = this.state.shopItems.filter(v => v.nameItem != itemName);
             this.setState({shopItems: tmpArr});
         }
+    }
+
+    getItemByItemName = (itemName) => {
+        //ф-ция возвращает хэш с описанием товара по его имени
+        var tmpArr = this.state.shopItems.filter(v => v.nameItem == itemName);
+        return tmpArr[0];
     }
 
     render(){
@@ -75,6 +92,16 @@ class IShopComponent extends React.Component {
                         {tableLines}
                     </tbody>
                 </table>
+                {
+                (this.state.selectedItem) &&
+                <ItemCardComponent
+                    nameItem = {this.state.selectedItem.nameItem}
+                    priceItem = {this.state.selectedItem.priceItem}
+                    imgPathItem = {this.state.selectedItem.imgPathItem}
+                    itemsInStorage = {this.state.selectedItem.itemsInStorage}
+                    type = {this.state.actionType}
+                />
+                }
             </div>
         )
     }

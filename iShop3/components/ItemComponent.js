@@ -12,6 +12,7 @@ class ItemComponent extends React.Component{
         selectedItemName:PropTypes.string.isRequired,
         cbSelected: PropTypes.func,
         cbDeleteItem: PropTypes.func,
+        cbEditItem: PropTypes.func,
     }
 
     clickOnItem = (EO) => {
@@ -22,6 +23,11 @@ class ItemComponent extends React.Component{
     clickOnButtonDel = (EO) => {
         //ф-ция вызывается при нажатии кнопки Удалить
         this.props.cbDeleteItem(this.props.nameItem);
+    }
+
+    clickOnButtonEdit = (EO) => {
+        //ф-ция выхывается при нажатии кнопки Редактировать
+        this.props.cbEditItem(this.props.nameItem)
     }
 
     getClassName = () => {
@@ -44,7 +50,7 @@ class ItemComponent extends React.Component{
                 <td onClick={this.clickOnItem} className = {this.getClassName()}>{this.props.itemsInStorage}</td>
                 <td>
                     <input type = "button" value = "Удалить" onClick = {this.clickOnButtonDel}></input>
-                    <input type = "button" value = "Редактировать" onClick = {this.clickOnButtonEdit}></input>
+                    <input type = "button" value = "Редактировать" onClick = {this.clickOnButtonEdit, this.clickOnItem} ></input>
                 </td>
             </tr>
         )

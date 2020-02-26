@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import './iShopComponent.css';
 
 import ItemComponent from './ItemComponent';
-import ItemCardComponent from './ItemCardComponent';
+import ShowItemCardComponent from './ShowItemCardComponent';
+import EditItemCardComponent from './EditItemCardComponent';
 
 class IShopComponent extends React.Component {
     static PropTypes = {
@@ -17,6 +18,7 @@ class IShopComponent extends React.Component {
         selectedItemName: null,
         selectedItem: null,
         actionType: 1,
+        isEdit: false,  //редактируется ли в данный момент запись
     }
 
     itemSelected = (itemName) => {
@@ -52,6 +54,18 @@ class IShopComponent extends React.Component {
         return tmpArr[0];
     }
 
+    editItem = (itemName) => {
+        //ф-ция переводит/убирает режим редактирования карточки
+        if(this.state.isEdit){
+            this.setState({isEdit: false});
+            this.setState({selectedItem: null});
+        }else{
+            this.setState({isEdit: true})
+            var selItem = this.getItemByItemName(itemName);
+            this.setState({selectedItem: selItem});
+        }
+    }
+
     render(){
 
         var tableHeaders = [];
@@ -80,6 +94,7 @@ class IShopComponent extends React.Component {
                 selectedItemName = {this.state.selectedItemName}
                 cbSelected = {this.itemSelected} 
                 cbDeleteItem = {this.ask4delete}
+                cbEditItem = {this.editItem}
             />
         );
         
@@ -92,15 +107,22 @@ class IShopComponent extends React.Component {
                         {tableLines}
                     </tbody>
                 </table>
+                <input type='button' value='Новый'></input>
                 {
-                (this.state.selectedItem) &&
-                <ItemCardComponent
-                    nameItem = {this.state.selectedItem.nameItem}
-                    priceItem = {this.state.selectedItem.priceItem}
-                    imgPathItem = {this.state.selectedItem.imgPathItem}
-                    itemsInStorage = {this.state.selectedItem.itemsInStorage}
-                    type = {this.state.actionType}
-                />
+                    (this.state.selectedItem) && (this.state.isEdit == false) &&
+                    <ShowItemCardComponent
+                        nameItem = {this.state.selectedItem.nameItem}
+                        priceItem = {this.state.selectedItem.priceItem}
+                        imgPathItem = {this.state.selectedItem.imgPathItem}
+                        itemsInStorage = {this.state.selectedItem.itemsInStorage}
+                        type = {this.state.actionType}
+                    />
+                }
+                {
+                    (this.state.isEdit) &&
+                    <EditItemCardComponent
+                        editItem = {this.state.selectedItem}
+                    />
                 }
             </div>
         )

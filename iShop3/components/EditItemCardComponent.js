@@ -18,7 +18,7 @@ class EditItemCardComponent extends React.Component{
 
     getHeader = () =>{
         if(this.props.editItem){
-            return "Редактирование товара " + editItem.nameItem;
+            return "Редактирование товара " + this.props.editItem.nameItem;
         }else {
             return "Добавление нового товара";
         }
@@ -30,18 +30,17 @@ class EditItemCardComponent extends React.Component{
             return (
                 <div>
                     <h1>{header}</h1>
-                    <label className='ShowItemCardComponent'>Name: 
-                        <input type='text'>{this.props.nameItem}</input>
-                    </label> 
-                    <label className='ShowItemCardComponent'>Price: {this.props.priceItem}
-                        <input type='text'>{this.props.nameItem}</input>
-                    </label> 
-                    <label className='ShowItemCardComponent'>imgPath: {this.props.imgPathItem}
-                        <input type='text'>{this.props.nameItem}</input>
-                    </label>
-                    <label className='ShowItemCardComponent'>Count: {this.props.itemsInStorage}
-                        <input type='text'>{this.props.nameItem}</input>
-                    </label>
+                    <label >Name: </label> 
+                    <input  type='text' defaultValue={this.props.editItem.nameItem}></input>
+
+                    <label className='ShowItemCardComponent'>Price: </label> 
+                    <input  type='text' defaultValue={this.props.editItem.priceItem}></input>
+                    
+                    <label className='ShowItemCardComponent'>imgPath: </label>
+                    <input  type='text' defaultValue={this.props.editItem.imgPathItem}></input>
+                    
+                    <label className='ShowItemCardComponent'>Count: </label>
+                    <input type='text' defaultValue={this.props.editItem.itemsInStorage}></input>
                 </div>
             )
         }else{

@@ -32,6 +32,9 @@ class IShopComponent extends React.Component {
             var selItem = this.getItemByItemName(itemName);
             this.setState({selectedItem: selItem});
         }
+        if (this.state.isEdit && this.state.selectedItemName != itemName){
+            this.setState({isEdit: false});
+        }
     }
 
     ask4delete = (itemName) => {

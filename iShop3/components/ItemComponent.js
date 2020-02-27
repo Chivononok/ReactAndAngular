@@ -27,6 +27,7 @@ class ItemComponent extends React.Component{
 
     clickOnButtonEdit = (EO) => {
         //ф-ция выхывается при нажатии кнопки Редактировать
+        this.clickOnItem(EO);
         this.props.cbEditItem(this.props.nameItem)
     }
 
@@ -50,7 +51,7 @@ class ItemComponent extends React.Component{
                 <td onClick={this.clickOnItem} className = {this.getClassName()}>{this.props.itemsInStorage}</td>
                 <td>
                     <input type = "button" value = "Удалить" onClick = {this.clickOnButtonDel}></input>
-                    <input type = "button" value = "Редактировать" onClick = {this.clickOnButtonEdit, this.clickOnItem} ></input>
+                    <input type = "button" value = "Редактировать" onClick = { this.clickOnButtonEdit} ></input>
                 </td>
             </tr>
         )

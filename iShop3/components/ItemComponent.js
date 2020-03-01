@@ -11,13 +11,28 @@ class ItemComponent extends React.Component{
         itemsInStorage: PropTypes.number,
         selectedItemName:PropTypes.string.isRequired,
         cbSelected: PropTypes.func,
+        cbUnselect: PropTypes.func,
         cbDeleteItem: PropTypes.func,
-        cbEditItem: PropTypes.func,
+        cbStartEdit: PropTypes.func,
+        cbStopEdit: PropTypes.func,
     }
 
     clickOnItem = (EO) => {
         //ф-ция вызывается при клике на строку таблицы
+        if (this.props.selectedItemName) {
+            if(this.props.nameItem==this.props.selectedItemName) {
+                //повторный клик на выделенную строку убирает выделение
+                this.props.cbUnselect(this.props.nameItem);
+            }else{
+                //выделяем строку
+                this.props.cbSelected(this.props.nameItem);
+            }
+            this.props.cbStopEdit();
+            return;
+        }
+        //если выделенной строки нет
         this.props.cbSelected(this.props.nameItem);
+        this.props.cbStopEdit();
     }
 
     clickOnButtonDel = (EO) => {
@@ -27,8 +42,8 @@ class ItemComponent extends React.Component{
 
     clickOnButtonEdit = (EO) => {
         //ф-ция выхывается при нажатии кнопки Редактировать
-        this.clickOnItem(EO);
-        this.props.cbEditItem(this.props.nameItem)
+        this.props.cbSelected(this.props.nameItem);
+        this.props.cbStartEdit(this.props.nameItem)
     }
 
     getClassName = () => {

@@ -19,22 +19,24 @@ class IShopComponent extends React.Component {
         selectedItem: null,
         actionType: 1,
         isEdit: false,  //редактируется ли в данный момент запись
+        isValid: true, //признак валидности всей формы
+        nameErrorText: "",
+        priceErrorText: "",
+        imgpathErrorText: "",
+        countErrorText: "",
     }
 
-    itemSelected = (itemName) => {
-        //ф-ция вызывается при клике на строку таблицы, выделяет/снимает_выделение со строки и отображает/прячет карточку товара
-        if (this.state.selectedItemName==itemName) {
-            //повторный клик по выделенной записи снимаает выделение
-            this.setState({selectedItemName: null});
-            this.setState({selectedItem: null});
-        } else {
-            this.setState({selectedItemName: itemName});
+    selectItem = (itemName) => {
+        //ф-ция выделяет строку с itemName
+        this.setState({selectedItemName: itemName});
             var selItem = this.getItemByItemName(itemName);
             this.setState({selectedItem: selItem});
-        }
-        if (this.state.isEdit && this.state.selectedItemName != itemName){
-            this.setState({isEdit: false});
-        }
+    }
+
+    unselectItem = () => {
+        //ф-ция убирает выделение
+        this.setState({selectedItemName: null});
+        this.setState({selectedItem: null});
     }
 
     ask4delete = (itemName) => {
@@ -57,16 +59,75 @@ class IShopComponent extends React.Component {
         return tmpArr[0];
     }
 
-    editItem = (itemName) => {
-        //ф-ция переводит/убирает режим редактирования карточки
-        if(this.state.isEdit){
-            this.setState({isEdit: false});
-            this.setState({selectedItem: null});
-        }else{
-            this.setState({isEdit: true})
-            var selItem = this.getItemByItemName(itemName);
-            this.setState({selectedItem: selItem});
+    startEdit = (itemName) => {
+        //ф-ция включает режим редактирвоания для конкретной записи
+        this.setState({isEdit: true})
+        var selItem = this.getItemByItemName(itemName);
+        this.setState({selectedItem: selItem});
+    }
+
+    stopEdit = () => {
+        //ф-ция убирает режим редактирования
+        this.setState({isEdit: false});
+    }
+
+    setValidResult = (result) =>{
+        //ф-ция хапоминает результат проверки на валидацию
+        this.setState({isValid: result})
+    }
+
+    checkField = (id, value) =>{
+        //ф-ция проверяет правильность заполнения поля
+        var res="";
+        
+        switch (id) {
+            case "Name":
+                if (value == "") {
+                    res = "поле не может быть пустым";
+                    this.setState({nameErrorText: res});
+                }else{
+                    this.setState({nameErrorText: ""});
+                    res = "";
+                }
+            break;
+            case "Price":
+                if (value == "") {
+                    res = "поле не может быть пустым";
+                    this.setState({priceErrorText: res});
+                }else{
+                    this.setState({priceErrorText: ""});
+                    res = "";
+                }
+            break
+            case "imgPath":
+                if (value == "") {
+                    res = "поле не может быть пустым";
+                    this.setState({imgpathErrorText: res});
+                }else{
+                    this.setState({imgpathErrorText: ""});
+                    res = "";
+                }
+            break
+            case "Count":
+                if (value == "") {
+                    res = "поле не может быть пустым";
+                    this.setState({countErrorText: res});
+                }else{
+                    this.setState({countErrorText: ""});
+                    res = "";
+                }
+            break
+            default:
+                break;
         }
+
+        if (res != "") {
+            this.setValidResult(false);
+        } else if(this.state.nameErrorText=="" && this.state.priceErrorText=="" && this.state.imgpathErrorText=="" && this.state.countErrorText==""){
+            this.setValidResult(true);
+        }
+
+        return res;
     }
 
     render(){
@@ -95,9 +156,11 @@ class IShopComponent extends React.Component {
                 imgPathItem = {v.imgPathItem} 
                 itemsInStorage = {v.itemsInStorage}
                 selectedItemName = {this.state.selectedItemName}
-                cbSelected = {this.itemSelected} 
+                cbSelected = {this.selectItem}
+                cbUnselect = {this.unselectItem}
                 cbDeleteItem = {this.ask4delete}
-                cbEditItem = {this.editItem}
+                cbStartEdit = {this.startEdit}
+                cbStopEdit = {this.stopEdit}
             />
         );
         
@@ -113,7 +176,7 @@ class IShopComponent extends React.Component {
                 <input type='button' value='Новый'></input>
                 {
                     (this.state.selectedItem) && (this.state.isEdit == false) &&
-                    <ShowItemCardComponent
+                    <ShowItemCardComponent key={this.state.selectedItem.nameItem}
                         nameItem = {this.state.selectedItem.nameItem}
                         priceItem = {this.state.selectedItem.priceItem}
                         imgPathItem = {this.state.selectedItem.imgPathItem}
@@ -122,9 +185,13 @@ class IShopComponent extends React.Component {
                     />
                 }
                 {
-                    (this.state.isEdit) &&
-                    <EditItemCardComponent
+                    (this.state.isEdit) && (this.state.selectedItem) &&
+                    <EditItemCardComponent key={this.state.selectedItem.nameItem}
                         editItem = {this.state.selectedItem}
+                        validText = {{"nameErrorText":this.state.nameErrorText, "priceErrorText":this.state.priceErrorText, "imgpathErrorText":this.state.imgpathErrorText, "countErrorText":this.state.countErrorText}}
+                        cbSetValidResult = {this.setValidResult}
+                        isValid = {this.state.isValid}
+                        cbCheckField = {this.checkField}
                     />
                 }
             </div>

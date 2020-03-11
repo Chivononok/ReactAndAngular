@@ -10,16 +10,31 @@ class ItemComponent extends React.Component{
         imgPathItem: PropTypes.string.isRequired,
         itemsInStorage: PropTypes.number,
         selectedItemName:PropTypes.string.isRequired,
+        isChanged: PropTypes.bool,
+        isEdit: PropTypes.bool,
         cbSelected: PropTypes.func,
         cbUnselect: PropTypes.func,
         cbDeleteItem: PropTypes.func,
         cbStartEdit: PropTypes.func,
         cbStopEdit: PropTypes.func,
+        cbSetChangeFlag: PropTypes.func,
+        cbSaveChangeItem: PropTypes.func,
     }
 
     clickOnItem = (EO) => {
         //ф-ция вызывается при клике на строку таблицы
         if (this.props.selectedItemName) {
+
+            if(this.props.isChanged){
+                let res = confirm("Запись была изменена. Сохранить изменения?");
+                if (res){
+                    
+                    this.removeChangeFlag();
+                }else{
+                    this.removeChangeFlag();
+                }
+            }
+
             if(this.props.nameItem==this.props.selectedItemName) {
                 //повторный клик на выделенную строку убирает выделение
                 this.props.cbUnselect(this.props.nameItem);
@@ -55,17 +70,21 @@ class ItemComponent extends React.Component{
         }
     }
 
+    removeChangeFlag = () =>{
+        this.props.cbSetChangeFlag(false);
+    }
+
     render(){
         return (
             <tr>
                 <td onClick={this.clickOnItem} className = {this.getClassName()}>{this.props.nameItem}</td>
                 <td onClick={this.clickOnItem} className = {this.getClassName()}>{this.props.priceItem}</td>
                 <td onClick={this.clickOnItem} className = {this.getClassName()}>
-                    <a href = {this.props.imgPathItem}>{this.props.nameItem}</a>
+                    <a href = {this.props.imgPathItem}>{this.props.imgPathItem}</a>
                 </td>
                 <td onClick={this.clickOnItem} className = {this.getClassName()}>{this.props.itemsInStorage}</td>
                 <td>
-                    <input type = "button" value = "Удалить" onClick = {this.clickOnButtonDel}></input>
+                    <input type = "button" value = "Удалить" onClick = {this.clickOnButtonDel} disabled={this.props.isEdit}></input>
                     <input type = "button" value = "Редактировать" onClick = { this.clickOnButtonEdit} ></input>
                 </td>
             </tr>

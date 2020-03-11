@@ -18,6 +18,8 @@ class EditItemCardComponent extends React.Component{
         isValid: PropTypes.bool,
         cbSetValidResult: PropTypes.func,
         cbCheckField: PropTypes.func,
+        cbSetChangeFlag: PropTypes.func,
+        cbSaveChangeItem: PropTypes.func,
     }
 
     state = {
@@ -25,6 +27,10 @@ class EditItemCardComponent extends React.Component{
         priceErrorText: this.props.validText.priceErrorText,
         imgpathErrorText: this.props.validText.imgpathErrorText,
         countErrorText: this.props.validText.countErrorText,
+        tmpNameItemVal: this.props.editItem.nameItem,
+        tmpPriceVal: this.props.editItem.priceItem,
+        tmpImgPathVal: this.props.editItem.imgPathItem,
+        tmpCountVal: this.props.editItem.itemsInStorage,
     }
 
     getHeader = () =>{
@@ -52,6 +58,7 @@ class EditItemCardComponent extends React.Component{
                     this.setState({nameErrorText: ""});
                     res = "";
                 }
+                this.setState({tmpNameItemVal: EO.target.value});
             break;
             case "Price":
                 if (EO.target.value == "") {
@@ -61,6 +68,7 @@ class EditItemCardComponent extends React.Component{
                     this.setState({priceErrorText: ""});
                     res = "";
                 }
+                this.setState({tmpPriceVal: EO.target.value})
             break
             case "imgPath":
                 if (EO.target.value == "") {
@@ -70,6 +78,7 @@ class EditItemCardComponent extends React.Component{
                     this.setState({imgpathErrorText: ""});
                     res = "";
                 }
+                this.setState({tmpImgPathVal: EO.target.value})
             break
             case "Count":
                 if (EO.target.value == "") {
@@ -79,6 +88,7 @@ class EditItemCardComponent extends React.Component{
                     this.setState({countErrorText: ""});
                     res = "";
                 }
+                this.setState({tmpCountVal: EO.target.value})
             break
             default:
                 break;
@@ -93,41 +103,44 @@ class EditItemCardComponent extends React.Component{
         return res;
     }
 
+    addChangeFlag = () =>{
+        this.props.cbSetChangeFlag(true);
+    }
+
     getEditBody = (header) => {
         var resultValid = {"nameErrorText":"", "priceErrorText":"", "imgpathErrorText":"", "countErrorText":""};
         return(
             <div>
                 <h1>{header}</h1>
                 <label >Name: </label> 
-                <input id='Name' type='text' defaultValue={this.props.editItem.nameItem} onBlur={this.checkField}></input>
+                <input id='Name' type='text' defaultValue={this.props.editItem.nameItem} onBlur={this.checkField} onChange={this.addChangeFlag}></input>
                 {
                     (this.state.nameErrorText !="") &&
                     <label>{this.state.nameErrorText}</label>
                 }
 
                 <label className='ShowItemCardComponent'>Price: </label> 
-                <input id='Price' type='text' defaultValue={this.props.editItem.priceItem} onBlur={this.checkField}></input>
+                <input id='Price' type='text' defaultValue={this.props.editItem.priceItem} onBlur={this.checkField} onChange={this.addChangeFlag}></input>
                 {
                     (this.state.priceErrorText !="") &&
                     <label>{this.state.priceErrorText}</label>
                 }
                 
                 <label className='ShowItemCardComponent'>imgPath: </label>
-                <input id='imgPath' type='text' defaultValue={this.props.editItem.imgPathItem} onBlur={this.checkField}></input>
+                <input id='imgPath' type='text' defaultValue={this.props.editItem.imgPathItem} onBlur={this.checkField} onChange={this.addChangeFlag}></input>
                 {
                     (this.state.imgpathErrorText !="") &&
                     <label>{this.state.imgpathErrorText}</label>
                 }
                 
                 <label className='ShowItemCardComponent'>Count: </label>
-                <input id='Count' type='text' defaultValue={this.props.editItem.itemsInStorage} onBlur={this.checkField}></input>
+                <input id='Count' type='text' defaultValue={this.props.editItem.itemsInStorage} onBlur={this.checkField} onChange={this.addChangeFlag}></input>
                 {
                     (this.state.countErrorText !="") &&
                     <label>{this.state.countErrorText}</label>
                 }
 
-                <input className='ShowItemCardComponent' type='button' value='Сохранить' disabled={resultValid.nameErrorText==""?false:true
-            }></input>
+                <input className='ShowItemCardComponent' type='button' value='Сохранить' onClick={this.save} disabled={this.state.nameErrorText=="" && this.state.priceErrorText=="" && this.state.imgpathErrorText=="" && this.state.countErrorText==""?false:true}></input>
                 <input type='button' value='Редактировать'></input>
             </div>   
         )
@@ -154,6 +167,12 @@ class EditItemCardComponent extends React.Component{
                 <input type='button' value='Отмена'></input>
             </div>
         )
+    }
+
+    save = () => {
+        let newItem = {"nameItem": this.state.tmpNameItemVal, "priceItem": this.state.tmpPriceVal, "imgPathItem":this.state.tmpImgPathVal, "itemsInStorage": this.state.tmpCountVal};
+        this.props.cbSaveChangeItem(newItem);
+        this.props.cbSetChangeFlag(false);
     }
 
     render(){

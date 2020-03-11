@@ -20,6 +20,7 @@ class IShopComponent extends React.Component {
         actionType: 1,
         isEdit: false,  //редактируется ли в данный момент запись
         isValid: true, //признак валидности всей формы
+        isChanged: false,  //признак того, что в карточку врежиме редактирования были внесены изменения
         nameErrorText: "",
         priceErrorText: "",
         imgpathErrorText: "",
@@ -56,6 +57,12 @@ class IShopComponent extends React.Component {
     getItemByItemName = (itemName) => {
         //ф-ция возвращает хэш с описанием товара по его имени
         var tmpArr = this.state.shopItems.filter(v => v.nameItem == itemName);
+        return tmpArr[0];
+    }
+
+    getItemById = (id) => {
+        //ф-ция возвращает хэш с описанием товара по его id
+        var tmpArr = this.state.shopItems.filter(v => v.id == id);
         return tmpArr[0];
     }
 
@@ -130,6 +137,22 @@ class IShopComponent extends React.Component {
         return res;
     }
 
+    setChangedFlag = (val) => {
+        //ф-ция выставляет/убирает флаг, что в каком-то компоненте что-то изменили
+        this.setState({isChanged: val});
+    }
+
+    saveChangeItem = (newItem) => {
+        //ф-ция меняет строку в таблице
+        let index = this.state.shopItems.indexOf(this.state.selectedItem) ;
+        if(index>-1){
+            this.state.shopItems[index].nameItem = newItem.nameItem;
+            this.state.shopItems[index].priceItem = newItem.priceItem;
+            this.state.shopItems[index].imgPathItem = newItem.imgPathItem;
+            this.state.shopItems[index].itemsInStorage = newItem.itemsInStorage;
+        }
+    }
+
     render(){
 
         var tableHeaders = [];
@@ -156,11 +179,15 @@ class IShopComponent extends React.Component {
                 imgPathItem = {v.imgPathItem} 
                 itemsInStorage = {v.itemsInStorage}
                 selectedItemName = {this.state.selectedItemName}
+                isChanged = {this.state.isChanged}
+                isEdit = {this.state.isEdit}
                 cbSelected = {this.selectItem}
                 cbUnselect = {this.unselectItem}
                 cbDeleteItem = {this.ask4delete}
                 cbStartEdit = {this.startEdit}
                 cbStopEdit = {this.stopEdit}
+                cbSetChangeFlag = {this.setChangedFlag}
+                cbSaveChangeItem = {this.saveChangeItem}
             />
         );
         
@@ -173,7 +200,7 @@ class IShopComponent extends React.Component {
                         {tableLines}
                     </tbody>
                 </table>
-                <input type='button' value='Новый'></input>
+                <input type='button' value='Новый' disabled={this.state.isEdit}></input>
                 {
                     (this.state.selectedItem) && (this.state.isEdit == false) &&
                     <ShowItemCardComponent key={this.state.selectedItem.nameItem}
@@ -192,6 +219,8 @@ class IShopComponent extends React.Component {
                         cbSetValidResult = {this.setValidResult}
                         isValid = {this.state.isValid}
                         cbCheckField = {this.checkField}
+                        cbSetChangeFlag = {this.setChangedFlag}
+                        cbSaveChangeItem = {this.saveChangeItem}
                     />
                 }
             </div>

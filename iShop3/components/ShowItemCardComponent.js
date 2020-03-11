@@ -16,7 +16,7 @@ class ShowItemCardComponent extends React.Component{
     render(){
         return (
             <div>
-                <label className='ShowItemCardComponent' >Name: {this.props.nameItem}</label> 
+                <label className='ShowItemCardComponent'>Name: {this.props.nameItem}</label> 
                 <label className='ShowItemCardComponent'>Price: {this.props.priceItem}</label> 
                 <label className='ShowItemCardComponent'>imgPath: {this.props.imgPathItem}</label>
                 <label className='ShowItemCardComponent'>Count: {this.props.itemsInStorage}</label>

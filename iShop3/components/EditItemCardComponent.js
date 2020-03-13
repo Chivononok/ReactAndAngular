@@ -17,16 +17,23 @@ class EditItemCardComponent extends React.Component{
         id: PropTypes.number,    //номер записи при добавлении
         isValid: PropTypes.bool,
         cbSetValidResult: PropTypes.func,
-        cbCheckField: PropTypes.func,
         cbSetChangeFlag: PropTypes.func,
         cbSaveChangeItem: PropTypes.func,
+        cbChangeEditedNameItemVal: PropTypes.func,
+        cbChangeEditedPriceItemVal : PropTypes.func,
+        cbChangeEditedimgPathItemVal : PropTypes.func,
+        cbChangeEditeditemsInStorageVal : PropTypes.func,
+        cbSetNameErrorText: PropTypes.func,
+        cbSetPriceErrorText : PropTypes.func,
+        cbSetImgpathErrorText: PropTypes.func,
+        cbSetCountErrorText: PropTypes.func,
     }
 
     state = {
-        nameErrorText: this.props.validText.nameErrorText,
-        priceErrorText: this.props.validText.priceErrorText,
-        imgpathErrorText: this.props.validText.imgpathErrorText,
-        countErrorText: this.props.validText.countErrorText,
+        nameErrorText: "",
+        priceErrorText: "",
+        imgpathErrorText: "",
+        countErrorText: "",
         tmpNameItemVal: this.props.editItem.nameItem,
         tmpPriceVal: this.props.editItem.priceItem,
         tmpImgPathVal: this.props.editItem.imgPathItem,
@@ -41,13 +48,13 @@ class EditItemCardComponent extends React.Component{
         }
     }
 
-    checkField = (EO, resultValid) =>{
+    checkField = (EO) =>{
         //ф-ция проверяет правильность заполнения поля
         
-        
         var res= "";
-   
-        
+
+        this.props.cbSetChangeFlag(true);
+
         switch (EO.target.id) {
             case "Name":
                 if (EO.target.value == "") {
@@ -59,6 +66,8 @@ class EditItemCardComponent extends React.Component{
                     res = "";
                 }
                 this.setState({tmpNameItemVal: EO.target.value});
+                this.props.cbChangeEditedNameItemVal(EO.target.value);
+                this.props.cbSetNameErrorText(res);
             break;
             case "Price":
                 if (EO.target.value == "") {
@@ -68,7 +77,9 @@ class EditItemCardComponent extends React.Component{
                     this.setState({priceErrorText: ""});
                     res = "";
                 }
-                this.setState({tmpPriceVal: EO.target.value})
+                this.setState({tmpPriceVal: EO.target.value});
+                this.props.cbChangeEditedPriceItemVal(EO.target.value);
+                this.props.cbSetPriceErrorText(res);
             break
             case "imgPath":
                 if (EO.target.value == "") {
@@ -78,7 +89,9 @@ class EditItemCardComponent extends React.Component{
                     this.setState({imgpathErrorText: ""});
                     res = "";
                 }
-                this.setState({tmpImgPathVal: EO.target.value})
+                this.setState({tmpImgPathVal: EO.target.value});
+                this.props.cbChangeEditedimgPathItemVal(EO.target.value);
+                this.props.cbSetImgpathErrorText(res);
             break
             case "Count":
                 if (EO.target.value == "") {
@@ -88,7 +101,9 @@ class EditItemCardComponent extends React.Component{
                     this.setState({countErrorText: ""});
                     res = "";
                 }
-                this.setState({tmpCountVal: EO.target.value})
+                this.setState({tmpCountVal: EO.target.value});
+                this.props.cbChangeEditeditemsInStorageVal(EO.target.value);
+                this.props.cbSetCountErrorText(res);
             break
             default:
                 break;
@@ -102,39 +117,57 @@ class EditItemCardComponent extends React.Component{
 
         return res;
     }
-
-    addChangeFlag = () =>{
+/*
+    addChangeFlag = (EO) =>{
         this.props.cbSetChangeFlag(true);
+        
+        if(EO.target.id=="Name"){
+            this.props.cbChangeEditedNameItemVal(EO.target.value);
+        }
+        if(EO.target.id=="Price"){
+            this.props.cbChangeEditedPriceItemVal(EO.target.value);
+        }
+        if(EO.target.id=="imgPath"){
+            this.props.cbChangeEditedimgPathItemVal(EO.target.value);
+        }
+        if(EO.target.id=="Count"){
+            this.props.cbChangeEditeditemsInStorageVal(EO.target.value);
+        }
+        if(this.state.nameErrorText=="" && this.state.priceErrorText=="" && this.state.imgpathErrorText=="" && this.state.countErrorText==""){
+            this.props.cbSetValidResult(true);
+        }
+        
     }
+    */
 
     getEditBody = (header) => {
-        var resultValid = {"nameErrorText":"", "priceErrorText":"", "imgpathErrorText":"", "countErrorText":""};
+        
         return(
             <div>
                 <h1>{header}</h1>
                 <label >Name: </label> 
-                <input id='Name' type='text' defaultValue={this.props.editItem.nameItem} onBlur={this.checkField} onChange={this.addChangeFlag}></input>
+                <input id='Name' type='text' defaultValue={this.props.editItem.nameItem} onChange={this.checkField }></input>
                 {
                     (this.state.nameErrorText !="") &&
                     <label>{this.state.nameErrorText}</label>
                 }
 
                 <label className='ShowItemCardComponent'>Price: </label> 
-                <input id='Price' type='text' defaultValue={this.props.editItem.priceItem} onBlur={this.checkField} onChange={this.addChangeFlag}></input>
+                <input id='Price' type='text' defaultValue={this.props.editItem.priceItem} onChange={this.checkField}></input>
                 {
                     (this.state.priceErrorText !="") &&
                     <label>{this.state.priceErrorText}</label>
                 }
                 
                 <label className='ShowItemCardComponent'>imgPath: </label>
-                <input id='imgPath' type='text' defaultValue={this.props.editItem.imgPathItem} onBlur={this.checkField} onChange={this.addChangeFlag}></input>
+                <input id='imgPath' type='text' defaultValue={this.props.editItem.imgPathItem}  onChange={this.checkField}></input>
                 {
                     (this.state.imgpathErrorText !="") &&
                     <label>{this.state.imgpathErrorText}</label>
                 }
                 
                 <label className='ShowItemCardComponent'>Count: </label>
-                <input id='Count' type='text' defaultValue={this.props.editItem.itemsInStorage} onBlur={this.checkField} onChange={this.addChangeFlag}></input>
+                <input id='Count' type='text' defaultValue={this.props.editItem.itemsInStorage}  onChange={this.checkField}></input>
                 {
                     (this.state.countErrorText !="") &&
                     <label>{this.state.countErrorText}</label>
@@ -170,8 +203,7 @@ class EditItemCardComponent extends React.Component{
     }
 
     save = () => {
-        let newItem = {"nameItem": this.state.tmpNameItemVal, "priceItem": this.state.tmpPriceVal, "imgPathItem":this.state.tmpImgPathVal, "itemsInStorage": this.state.tmpCountVal};
-        this.props.cbSaveChangeItem(newItem);
+        this.props.cbSaveChangeItem();
         this.props.cbSetChangeFlag(false);
     }
 

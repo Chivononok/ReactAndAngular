@@ -10,8 +10,10 @@ class ItemComponent extends React.Component{
         imgPathItem: PropTypes.string.isRequired,
         itemsInStorage: PropTypes.number,
         selectedItemName:PropTypes.string.isRequired,
+        selectedItem:PropTypes.shape({}),
         isChanged: PropTypes.bool,
         isEdit: PropTypes.bool,
+        isValid: PropTypes.bool,
         cbSelected: PropTypes.func,
         cbUnselect: PropTypes.func,
         cbDeleteItem: PropTypes.func,
@@ -19,16 +21,23 @@ class ItemComponent extends React.Component{
         cbStopEdit: PropTypes.func,
         cbSetChangeFlag: PropTypes.func,
         cbSaveChangeItem: PropTypes.func,
+        cbCheckValid: PropTypes.func,
     }
 
     clickOnItem = (EO) => {
         //ф-ция вызывается при клике на строку таблицы
+        let resValid = this.props.cbCheckValid();
+        if (resValid==false){
+            console.log("Не валидно");
+            return
+        }
+        
         if (this.props.selectedItemName) {
 
             if(this.props.isChanged){
                 let res = confirm("Запись была изменена. Сохранить изменения?");
                 if (res){
-                    
+                    this.props.cbSaveChangeItem();
                     this.removeChangeFlag();
                 }else{
                     this.removeChangeFlag();
@@ -56,7 +65,7 @@ class ItemComponent extends React.Component{
     }
 
     clickOnButtonEdit = (EO) => {
-        //ф-ция выхывается при нажатии кнопки Редактировать
+        //ф-ция вызывается при нажатии кнопки Редактировать
         this.props.cbSelected(this.props.nameItem);
         this.props.cbStartEdit(this.props.nameItem)
     }

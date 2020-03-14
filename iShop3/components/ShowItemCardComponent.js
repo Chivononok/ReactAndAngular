@@ -9,7 +9,6 @@ class ShowItemCardComponent extends React.Component{
         priceItem: PropTypes.number.isRequired,
         imgPathItem: PropTypes.string.isRequired,
         itemsInStorage: PropTypes.number.isRequired,
-        type: PropTypes.number.isRequired,  //1 - добавление нового, 2 -редактирование
     }
 
 

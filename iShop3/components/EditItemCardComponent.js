@@ -4,6 +4,15 @@ import PropTypes from 'prop-types';
 import './EditItemCardComponent.css';
 
 class EditItemCardComponent extends React.Component{
+    static defaultProps = {
+        editItem: PropTypes.shape({
+            nameItem: "",
+            priceItem: "",
+            imgPathItem: "",
+            itemsInStorage: "",
+        }),
+    }
+
     static PropTypes = {
         //=== запись для редактирования ===
         editItem: PropTypes.shape({
@@ -27,13 +36,15 @@ class EditItemCardComponent extends React.Component{
         cbSetPriceErrorText : PropTypes.func,
         cbSetImgpathErrorText: PropTypes.func,
         cbSetCountErrorText: PropTypes.func,
+        cbChangeNewMode: PropTypes.func,
+        cbStopEdit: PropTypes.func,
     }
 
     state = {
-        nameErrorText: "",
-        priceErrorText: "",
-        imgpathErrorText: "",
-        countErrorText: "",
+        nameErrorText: this.props.validText.nameItem,
+        priceErrorText:this.props.validText.priceItem,
+        imgpathErrorText:this.props.validText.imgPathItem,
+        countErrorText: this.props.validText.itemsInStorage,
         tmpNameItemVal: this.props.editItem.nameItem,
         tmpPriceVal: this.props.editItem.priceItem,
         tmpImgPathVal: this.props.editItem.imgPathItem,
@@ -41,7 +52,7 @@ class EditItemCardComponent extends React.Component{
     }
 
     getHeader = () =>{
-        if(this.props.editItem){
+        if(typeof this.props.id !== 'number'){
             return "Редактирование товара " + this.props.editItem.nameItem;
         }else {
             return "Добавление нового товара";
@@ -50,7 +61,6 @@ class EditItemCardComponent extends React.Component{
 
     checkField = (EO) =>{
         //ф-ция проверяет правильность заполнения поля
-        
         var res= "";
 
         this.props.cbSetChangeFlag(true);
@@ -114,110 +124,94 @@ class EditItemCardComponent extends React.Component{
         } else if(this.state.nameErrorText=="" && this.state.priceErrorText=="" && this.state.imgpathErrorText=="" && this.state.countErrorText==""){
             this.props.cbSetValidResult(true);
         }
-
         return res;
     }
-/*
-    addChangeFlag = (EO) =>{
-        this.props.cbSetChangeFlag(true);
-        
-        if(EO.target.id=="Name"){
-            this.props.cbChangeEditedNameItemVal(EO.target.value);
-        }
-        if(EO.target.id=="Price"){
-            this.props.cbChangeEditedPriceItemVal(EO.target.value);
-        }
-        if(EO.target.id=="imgPath"){
-            this.props.cbChangeEditedimgPathItemVal(EO.target.value);
-        }
-        if(EO.target.id=="Count"){
-            this.props.cbChangeEditeditemsInStorageVal(EO.target.value);
-        }
-        if(this.state.nameErrorText=="" && this.state.priceErrorText=="" && this.state.imgpathErrorText=="" && this.state.countErrorText==""){
-            this.props.cbSetValidResult(true);
-        }
-        
-    }
-    */
 
     getEditBody = (header) => {
         
         return(
             <div>
                 <h1>{header}</h1>
-                <label >Name: </label> 
-                <input id='Name' type='text' defaultValue={this.props.editItem.nameItem} onChange={this.checkField }></input>
                 {
-                    (this.state.nameErrorText !="") &&
-                    <label>{this.state.nameErrorText}</label>
+                    (typeof this.props.id == 'number') &&
+                    <label className='ShowItemCardComponent'>Id: {this.props.id}</label>
                 }
-
-                <label className='ShowItemCardComponent'>Price: </label> 
-                <input id='Price' type='text' defaultValue={this.props.editItem.priceItem} onChange={this.checkField}></input>
-                {
-                    (this.state.priceErrorText !="") &&
-                    <label>{this.state.priceErrorText}</label>
-                }
+                <div className="EditItemCardComponent">
+                    <label >Name: </label> 
+                    <input id='Name' type='text' defaultValue={this.props.editItem.nameItem} onChange={this.checkField}></input>
+                    {
+                        (this.state.nameErrorText !="") &&
+                        <label className="EditItemCardComponent_ErrText">{this.state.nameErrorText}</label>
+                    }
+                </div>
                 
-                <label className='ShowItemCardComponent'>imgPath: </label>
-                <input id='imgPath' type='text' defaultValue={this.props.editItem.imgPathItem}  onChange={this.checkField}></input>
-                {
-                    (this.state.imgpathErrorText !="") &&
-                    <label>{this.state.imgpathErrorText}</label>
-                }
+                <div className="EditItemCardComponent">
+                    <label >Price: </label> 
+                    <input id='Price' type='text' defaultValue={this.props.editItem.priceItem} onChange={this.checkField}></input>
+                    {
+                        (this.state.priceErrorText !="") &&
+                        <label className="EditItemCardComponent_ErrText">{this.state.priceErrorText}</label>
+                    }
+                </div>
                 
-                <label className='ShowItemCardComponent'>Count: </label>
-                <input id='Count' type='text' defaultValue={this.props.editItem.itemsInStorage}  onChange={this.checkField}></input>
+                <div className="EditItemCardComponent">
+                    <label>imgPath: </label>
+                    <input id='imgPath' type='text' defaultValue={this.props.editItem.imgPathItem} onChange={this.checkField}></input>
+                    {
+                        (this.state.imgpathErrorText !="") &&
+                        <label className="EditItemCardComponent_ErrText">{this.state.imgpathErrorText}</label>
+                    }
+                </div>
+                
+                <div className="EditItemCardComponent">
+                    <label>Count: </label>
+                    <input id='Count' type='text' defaultValue={this.props.editItem.itemsInStorage} onChange={this.checkField}></input>
+                    {
+                        (this.state.countErrorText !="") &&
+                        <label className="EditItemCardComponent_ErrText">{this.state.countErrorText}</label>
+                    }
+                </div>
+                
                 {
-                    (this.state.countErrorText !="") &&
-                    <label>{this.state.countErrorText}</label>
+                    (typeof this.props.id !== 'number') && 
+                    <div className="EditItemCardComponent">  
+                        <input type='button' value='Сохранить' onClick={this.save} disabled={this.state.nameErrorText=="" && this.state.priceErrorText=="" && this.state.imgpathErrorText=="" && this.state.countErrorText==""?false:true}></input>
+                        <input type='button' value='Отмена' onClick={this.cancel}></input>
+                    </div>
                 }
-
-                <input className='ShowItemCardComponent' type='button' value='Сохранить' onClick={this.save} disabled={this.state.nameErrorText=="" && this.state.priceErrorText=="" && this.state.imgpathErrorText=="" && this.state.countErrorText==""?false:true}></input>
-                <input type='button' value='Редактировать'></input>
+                {
+                    (typeof this.props.id == 'number') && 
+                    <div className="EditItemCardComponent"> 
+                        <input type='button' value='Добавить' onClick={this.save} disabled={this.state.nameErrorText=="" && this.state.priceErrorText=="" && this.state.imgpathErrorText=="" && this.state.countErrorText==""?false:true}></input>
+                        <input type='button' value='Отмена' onClick={this.cancel}></input>
+                    </div>
+                }
             </div>   
         )
     }
 
-    getNewBody = (header) => {
-        return(
-            <div>
-                <h1>{header}</h1>
-                <label className='ShowItemCardComponent'>Id: {this.props.id}</label>
-                <label className='ShowItemCardComponent'>Name: 
-                    <input type='text'></input>
-                </label> 
-                <label className='ShowItemCardComponent'>Price: 
-                    <input type='text'></input>
-                </label> 
-                <label className='ShowItemCardComponent'>imgPath: 
-                    <input type='text'></input>
-                </label>
-                <label className='ShowItemCardComponent'>Count: 
-                    <input type='text'></input>
-                </label>
-                <input className='ShowItemCardComponent' type='button' value='Добавить'></input>
-                <input type='button' value='Отмена'></input>
-            </div>
-        )
-    }
-
     save = () => {
+        //обработчик кнопки Сохранить
         this.props.cbSaveChangeItem();
         this.props.cbSetChangeFlag(false);
+        this.props.cbChangeNewMode(false);
+        this.props.cbStopEdit();
+    }
+
+    cancel = () => {
+        //действие происходит при нажатии кнопки Отменить
+        this.props.cbSetChangeFlag(false);
+        this.props.cbChangeNewMode(false);
+        this.props.cbStopEdit();
     }
 
     render(){
         var header = this.getHeader();
-        
-        if(this.props.editItem){
-            var body = this.getEditBody(header);
-        }else{
-            var body = this.getNewBody(header);
-        }
+        var body = this.getEditBody(header);
         return (
             <div>{body}</div>
         )
+        
     }
 }
 

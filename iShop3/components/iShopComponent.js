@@ -15,9 +15,7 @@ class IShopComponent extends React.Component {
 
     state = {
         shopItems: this.props.items,
-        selectedItemName: null,
         selectedItem: null,
-        actionType: 1,
         isEdit: false,  //редактируется ли в данный момент запись
         isValid: true, //признак валидности всей формы
         isChanged: false,  //признак того, что в карточку врежиме редактирования были внесены изменения
@@ -32,41 +30,34 @@ class IShopComponent extends React.Component {
         editedNewitemsInStorageVal: "",
     }
 
-    selectItem = (itemName) => {
-        //ф-ция выделяет строку с itemName
-        this.setState({selectedItemName: itemName});
-            var selItem = this.getItemByItemName(itemName);
-            this.setState({selectedItem: selItem});
-            this.setState({editedNewNameItemVal: selItem.nameItem});
-            this.setState({editedNewPriceItemVal: selItem.priceItem});
-            this.setState({editedNewimgPathItemVal: selItem.imgPathItem});
-            this.setState({editedNewitemsInStorageVal: selItem.itemsInStorage});
+    selectItem = (id) => {
+        //ф-ция выделяет строку по id
+        var selItem = this.getItemById(id);
+        this.setState({selectedItem: selItem});
+        this.setState({editedNewNameItemVal: selItem.nameItem});
+        this.setState({editedNewPriceItemVal: selItem.priceItem});
+        this.setState({editedNewimgPathItemVal: selItem.imgPathItem});
+        this.setState({editedNewitemsInStorageVal: selItem.itemsInStorage});
     }
 
     unselectItem = () => {
         //ф-ция убирает выделение
-        this.setState({selectedItemName: null});
         this.setState({selectedItem: null});
     }
 
-    ask4delete = (itemName) => {
+    ask4delete = (id) => {
         //ф-ция вызывается при нажатии кнопки Удалить
-        var res = confirm("Вы уверены, что хотите удалить запись " + itemName + "?");
+        let delItem = this.getItemById(id);
+        var res = confirm("Вы уверены, что хотите удалить запись " + delItem.nameItem + "?");
         if (res) {
             if(this.state.selectedItem){
-                if(this.state.selectedItem.nameItem == itemName){
+                if(this.state.selectedItem.id == id){
                     this.setState({selectedItem: null});
                 }
             }
-            var tmpArr = this.state.shopItems.filter(v => v.nameItem != itemName);
+            var tmpArr = this.state.shopItems.filter(v => v.id != id);
             this.setState({shopItems: tmpArr});
         }
-    }
-
-    getItemByItemName = (itemName) => {
-        //ф-ция возвращает хэш с описанием товара по его имени
-        var tmpArr = this.state.shopItems.filter(v => v.nameItem == itemName);
-        return tmpArr[0];
     }
 
     getItemById = (id) => {
@@ -75,10 +66,10 @@ class IShopComponent extends React.Component {
         return tmpArr[0];
     }
 
-    startEdit = (itemName) => {
+    startEdit = (id) => {
         //ф-ция включает режим редактирвоания для конкретной записи
         this.setState({isEdit: true})
-        var selItem = this.getItemByItemName(itemName);
+        var selItem = this.getItemById(id);
         this.setState({selectedItem: selItem});
     }
 
@@ -118,6 +109,14 @@ class IShopComponent extends React.Component {
             this.state.shopItems[index].priceItem = this.state.editedNewPriceItemVal;
             this.state.shopItems[index].imgPathItem = this.state.editedNewimgPathItemVal;
             this.state.shopItems[index].itemsInStorage = this.state.editedNewitemsInStorageVal;
+        }else{
+            let newItem = {};
+            newItem.nameItem = this.state.editedNewNameItemVal;
+            newItem.priceItem = this.state.editedNewPriceItemVal;
+            newItem.imgPathItem = this.state.editedNewimgPathItemVal;
+            newItem.itemsInStorage = this.state.editedNewitemsInStorageVal;
+            newItem.id = this.getLastId()+1;
+            this.state.shopItems.push(newItem);
         }
     }
 
@@ -159,6 +158,18 @@ class IShopComponent extends React.Component {
 
     startNewMode = () =>{
         this.changeNewMode(true);
+        this.setState({selectedItem: null})
+    }
+
+    getLastId = () => {
+        //ф-ция возвращает id последнего товара
+        let res = 0;
+        let countElements = this.state.shopItems.length;
+        if (countElements>0){
+            return this.state.shopItems[countElements-1].id;
+        }else{
+            return 0;
+        }
     }
 
     render(){
@@ -181,16 +192,17 @@ class IShopComponent extends React.Component {
         //=========================
 
         tableLines = this.state.shopItems.map(v => 
-            <ItemComponent key={v.nameItem}
+            <ItemComponent key={v.id}
+                id = {v.id}
                 nameItem = {v.nameItem}
                 priceItem = {v.priceItem} 
                 imgPathItem = {v.imgPathItem} 
                 itemsInStorage = {v.itemsInStorage}
-                selectedItemName = {this.state.selectedItemName}
                 selectedItem = {this.state.selectedItem}
                 isChanged = {this.state.isChanged}
                 isEdit = {this.state.isEdit}
                 isValid = {this.state.isValid}
+                isNewMode = {this.state.isNewMode}
                 cbSelected = {this.selectItem}
                 cbUnselect = {this.unselectItem}
                 cbDeleteItem = {this.ask4delete}
@@ -201,6 +213,22 @@ class IShopComponent extends React.Component {
                 cbCheckValid = {this.checkValid}
             />
         );
+
+        let validText = {
+            "nameItem": "поле не может быть пустым", 
+            "priceItem":"поле не может быть пустым", 
+            "imgPathItem":"поле не может быть пустым", 
+            "itemsInStorage":"поле не может быть пустым"
+        };
+
+        let editValidText = {
+            "nameItem": "", 
+            "priceItem":"", 
+            "imgPathItem":"", 
+            "itemsInStorage":""
+        };
+
+        let id = this.getLastId() + 1;
         
         return (
             <div className='IShopComponent'>
@@ -211,21 +239,21 @@ class IShopComponent extends React.Component {
                         {tableLines}
                     </tbody>
                 </table>
-                <input type='button' value='Новый' disabled={this.state.isEdit} onClick={this.startNewMode}></input>
+                <input type='button' value='Новый' disabled={this.state.isEdit || this.state.isNewMode} onClick={this.startNewMode}></input>
                 {
-                    (this.state.selectedItem) && (this.state.isEdit == false) &&
-                    <ShowItemCardComponent key={this.state.selectedItem.nameItem}
+                    (this.state.selectedItem) && (this.state.isEdit == false) && (this.state.isNewMode==false) &&
+                    <ShowItemCardComponent key={this.state.selectedItem.id}
                         nameItem = {this.state.selectedItem.nameItem}
                         priceItem = {this.state.selectedItem.priceItem}
                         imgPathItem = {this.state.selectedItem.imgPathItem}
                         itemsInStorage = {this.state.selectedItem.itemsInStorage}
-                        type = {this.state.actionType}
                     />
                 }
                 {
-                    (this.state.isEdit)  && (this.state.selectedItem) &&
-                    <EditItemCardComponent key={this.state.selectedItem.nameItem}
+                    (this.state.isEdit)  && (this.state.selectedItem) && (this.state.isNewMode==false) &&
+                    <EditItemCardComponent key={this.state.selectedItem.id}
                         editItem = {this.state.selectedItem}
+                        validText = {editValidText}
                         cbSetValidResult = {this.setValidResult}
                         isValid = {this.state.isValid}
                         cbSetChangeFlag = {this.setChangedFlag}
@@ -238,26 +266,30 @@ class IShopComponent extends React.Component {
                         cbSetPriceErrorText = {this.setPriceErrorText}
                         cbSetImgpathErrorText = {this.setImgpathErrorText}
                         cbSetCountErrorText = {this.setCountErrorText}
+                        cbChangeNewMode = {this.changeNewMode}
+                        cbStopEdit = {this.stopEdit}
                     />
                 }
                 {
                     (this.state.isNewMode) &&
-                    <EditItemCardComponent 
-                    editItem = {null}
-                    cbSetValidResult = {this.setValidResult}
-                    isValid = {this.state.isValid}
-                    cbSetChangeFlag = {this.setChangedFlag}
-                    cbSaveChangeItem = {this.saveChangeItem}
-                    cbChangeEditedNameItemVal = {this.changeEditedNameItemVal}
-                    cbChangeEditedPriceItemVal = {this.changeEditedPriceItemVal}
-                    cbChangeEditedimgPathItemVal = {this.changeEditedimgPathItemVal}
-                    cbChangeEditeditemsInStorageVal = {this.changeEditeditemsInStorageVal}
-                    cbSetNameErrorText = {this.setNameErrorText}
-                    cbSetPriceErrorText = {this.setPriceErrorText}
-                    cbSetImgpathErrorText = {this.setImgpathErrorText}
-                    cbSetCountErrorText = {this.setCountErrorText}
+                    <EditItemCardComponent key = {id}
+                        id = {id}
+                        validText = {validText}
+                        cbSetValidResult = {this.setValidResult}
+                        isValid = {this.state.isValid}
+                        cbSetChangeFlag = {this.setChangedFlag}
+                        cbSaveChangeItem = {this.saveChangeItem}
+                        cbChangeEditedNameItemVal = {this.changeEditedNameItemVal}
+                        cbChangeEditedPriceItemVal = {this.changeEditedPriceItemVal}
+                        cbChangeEditedimgPathItemVal = {this.changeEditedimgPathItemVal}
+                        cbChangeEditeditemsInStorageVal = {this.changeEditeditemsInStorageVal}
+                        cbSetNameErrorText = {this.setNameErrorText}
+                        cbSetPriceErrorText = {this.setPriceErrorText}
+                        cbSetImgpathErrorText = {this.setImgpathErrorText}
+                        cbSetCountErrorText = {this.setCountErrorText}
+                        cbChangeNewMode = {this.changeNewMode}
+                        cbStopEdit = {this.stopEdit}
                     />
-
                 }
             </div>
         )

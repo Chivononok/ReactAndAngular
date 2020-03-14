@@ -5,15 +5,16 @@ import './ItemComponent.css';
 
 class ItemComponent extends React.Component{
     static PropTypes = {
+        id: PropTypes.number,
         nameItem: PropTypes.string.isRequired,
         priceItem: PropTypes.number,
         imgPathItem: PropTypes.string.isRequired,
         itemsInStorage: PropTypes.number,
-        selectedItemName:PropTypes.string.isRequired,
         selectedItem:PropTypes.shape({}),
         isChanged: PropTypes.bool,
         isEdit: PropTypes.bool,
         isValid: PropTypes.bool,
+        isNewMode: PropTypes.bool,
         cbSelected: PropTypes.func,
         cbUnselect: PropTypes.func,
         cbDeleteItem: PropTypes.func,
@@ -27,13 +28,11 @@ class ItemComponent extends React.Component{
     clickOnItem = (EO) => {
         //ф-ция вызывается при клике на строку таблицы
         let resValid = this.props.cbCheckValid();
-        if (resValid==false){
-            console.log("Не валидно");
+        if (resValid==false || this.props.isNewMode){
             return
         }
         
-        if (this.props.selectedItemName) {
-
+        if (this.props.selectedItem) {
             if(this.props.isChanged){
                 let res = confirm("Запись была изменена. Сохранить изменения?");
                 if (res){
@@ -44,42 +43,57 @@ class ItemComponent extends React.Component{
                 }
             }
 
-            if(this.props.nameItem==this.props.selectedItemName) {
+            if(this.props.id==this.props.selectedItem.id) {
                 //повторный клик на выделенную строку убирает выделение
-                this.props.cbUnselect(this.props.nameItem);
+                this.props.cbUnselect(this.props.id);
             }else{
                 //выделяем строку
-                this.props.cbSelected(this.props.nameItem);
+                this.props.cbSelected(this.props.id);
             }
+            
             this.props.cbStopEdit();
             return;
         }
         //если выделенной строки нет
-        this.props.cbSelected(this.props.nameItem);
+        this.props.cbSelected(this.props.id);
         this.props.cbStopEdit();
     }
 
     clickOnButtonDel = (EO) => {
         //ф-ция вызывается при нажатии кнопки Удалить
-        this.props.cbDeleteItem(this.props.nameItem);
+        this.props.cbDeleteItem(this.props.id);
     }
 
     clickOnButtonEdit = (EO) => {
         //ф-ция вызывается при нажатии кнопки Редактировать
-        this.props.cbSelected(this.props.nameItem);
-        this.props.cbStartEdit(this.props.nameItem)
+        if(this.props.isChanged){
+            let res = confirm("Запись была изменена. Сохранить изменения?");
+            if (res){
+                this.props.cbSaveChangeItem();
+                this.removeChangeFlag();
+            }else{
+                this.removeChangeFlag();
+            }
+        }
+        this.props.cbSelected(this.props.id);
+        this.props.cbStartEdit(this.props.id)
     }
 
     getClassName = () => {
         //ф-ция возвращает название класса для выделенной строки
-        if(this.props.selectedItemName==this.props.nameItem){
-            return "itemComponent_clicked" + " itemComponent_td";
+        if(this.props.selectedItem){
+            if(this.props.selectedItem.id==this.props.id){
+                return "itemComponent_clicked" + " itemComponent_td";
+            }else {
+                return " itemComponent_td";
+            }
         }else {
             return " itemComponent_td";
         }
     }
 
     removeChangeFlag = () =>{
+        //ф-ция убирает режим редактирования
         this.props.cbSetChangeFlag(false);
     }
 
@@ -93,8 +107,8 @@ class ItemComponent extends React.Component{
                 </td>
                 <td onClick={this.clickOnItem} className = {this.getClassName()}>{this.props.itemsInStorage}</td>
                 <td>
-                    <input type = "button" value = "Удалить" onClick = {this.clickOnButtonDel} disabled={this.props.isEdit}></input>
-                    <input type = "button" value = "Редактировать" onClick = { this.clickOnButtonEdit} ></input>
+                    <input type = "button" value = "Удалить" onClick = {this.clickOnButtonDel} disabled={this.props.isEdit || this.props.isNewMode}></input>
+                    <input type = "button" value = "Редактировать" onClick = { this.clickOnButtonEdit} disabled = {this.props.isNewMode}></input>
                 </td>
             </tr>
         )

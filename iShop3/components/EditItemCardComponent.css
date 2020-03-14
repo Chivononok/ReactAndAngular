@@ -1,0 +1,8 @@
+.EditItemCardComponent{
+    margin-top: 2px;
+}
+
+.EditItemCardComponent_ErrText{
+    color: red;
+    margin-left: 2px;
+}

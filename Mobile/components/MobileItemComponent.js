@@ -10,6 +10,10 @@ class MobileItemComponent extends React.PureComponent{
 
     }
 
+    clickOnButtonEdit = () =>{
+        events.emit("editClient", this.props.curClient);
+    }
+
     clickOnButtonDel = (EO) =>{
         events.emit("delClient", this.props.curClient);
     }
@@ -24,10 +28,10 @@ class MobileItemComponent extends React.PureComponent{
                 <td >{this.props.curClient.balance}</td>
                 <td >{this.props.curClient.status}</td>
                 <td>
-                    <input type = "button" value = "Удалить" onClick = {this.clickOnButtonDel} disabled={this.props.isEdit || this.props.isNewMode}></input>
+                    <input type = "button" value = "Удалить" onClick = {this.clickOnButtonDel}></input>
                 </td>
                 <td>
-                    <input type = "button" value = "Редактировать" onClick = { this.clickOnButtonEdit} disabled = {this.props.isNewMode}></input>
+                    <input type = "button" value = "Редактировать" onClick = { this.clickOnButtonEdit} ></input>
                 </td>
             </tr>
         )

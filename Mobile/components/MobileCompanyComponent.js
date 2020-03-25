@@ -6,6 +6,7 @@ import './MobileCompanyComponent.css';
 import MobileItemComponent from './MobileItemComponent';
 import MobileFilterComponent from './MobileFilterComponent';
 import {events} from './events';
+import EditMobileItemComponent from './EditMobileItemComponent'
 
 class MobileCompanyComponent extends React.PureComponent{
     static propTypes = {
@@ -24,8 +25,9 @@ class MobileCompanyComponent extends React.PureComponent{
     };
 
     state = {
-        companyName:  this.props.name,
+        companyName: this.props.name,
         clientsArr: this.props.clients,
+        editClient: null,
     }
 
     setCompanyNameMTC = () =>{
@@ -37,16 +39,40 @@ class MobileCompanyComponent extends React.PureComponent{
     }
 
     componentDidMount = () =>{
-        events.addListener("delClient", this.removeClient)
+        events.addListener("delClient", this.removeClient);
+        events.addListener("editClient", this.editClient);
+        events.addListener("stopEditClient", this.stopEdit);
+        events.addListener("updateClient", this.updateClient);
+        
     }
 
     componentWillUnmount = () =>{
-        events.removeListener("delClient", this.removeClient)
+        events.removeListener("delClient", this.removeClient);
+        events.removeListener("editClient", this.editClient);
+        events.removeListener("stopEditClient", this.stopEdit);
+        events.removeListener("updateClient", this.updateClient);
     }
 
     removeClient = (client) =>{
         var tmpArr = this.state.clientsArr.filter(v => v != client);
         this.setState({clientsArr: tmpArr});
+    }
+
+    editClient = (client) =>{
+        this.setState({editClient: client});
+    }
+
+    stopEdit = () =>{
+        this.setState({editClient: null});
+    }
+
+    updateClient = (curClient, newClient) =>{
+        let index = this.state.clientsArr.indexOf(curClient);
+        if(index > -1){
+            let tmpArr = [...this.state.clientsArr];
+            tmpArr[index] = newClient;
+            this.setState({clientsArr: tmpArr});
+        }
     }
 
     render(){
@@ -83,7 +109,6 @@ class MobileCompanyComponent extends React.PureComponent{
                     <label>Название: {this.state.companyName}</label>
                 </div>
                 <MobileFilterComponent/>
-
                 <table>
                     {header}
                     <tbody>
@@ -91,6 +116,12 @@ class MobileCompanyComponent extends React.PureComponent{
                     </tbody>
                 </table>
                 <input type='button' value='Добавить клиента' ></input>
+                {
+                    (this.state.editClient) &&
+                    <EditMobileItemComponent key = {this.state.editClient.id}
+                        curClient = {this.state.editClient}
+                    />
+                }
                 
             </div>
         )

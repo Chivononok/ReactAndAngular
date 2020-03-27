@@ -28,10 +28,10 @@ class MobileItemComponent extends React.PureComponent{
                 <td >{this.props.curClient.balance}</td>
                 <td >{this.props.curClient.status}</td>
                 <td>
-                    <input type = "button" value = "Удалить" onClick = {this.clickOnButtonDel} disabled={this.props.id>-1}></input>
+                    <input type = "button" value = "Редактировать" onClick = { this.clickOnButtonEdit} disabled={this.props.id>-1}></input>
                 </td>
                 <td>
-                    <input type = "button" value = "Редактировать" onClick = { this.clickOnButtonEdit} disabled={this.props.id>-1}></input>
+                    <input type = "button" value = "Удалить" onClick = {this.clickOnButtonDel} disabled={this.props.id>-1}></input>
                 </td>
             </tr>
         )

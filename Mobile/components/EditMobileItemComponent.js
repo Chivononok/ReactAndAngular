@@ -7,7 +7,7 @@ import {events} from './events';
 class EditMobileItemComponent extends React.PureComponent{
     static propTypes = {
         curClient: PropTypes.shape(),
-        id: PropTypes.string,
+        id: PropTypes.number,
     }
 
     state = {
@@ -20,11 +20,14 @@ class EditMobileItemComponent extends React.PureComponent{
     }
 
     isChangeTrue = () =>{
-        this.setState({isChange: true});
+        //проставляет флаг, что что-то изменили в данных клиента
+        if(!this.state.isChange){
+            this.setState({isChange: true});
+        }
     }
 
     getTmpVal = (EO) =>{
-        
+        //ф-ция запоминает изменения, вносимые в данные клиента
         switch (EO.target.id) {
             case "lastName":
                 this.setState({lastNameTmp: EO.target.value});
@@ -47,11 +50,11 @@ class EditMobileItemComponent extends React.PureComponent{
     }
 
     getEditBody = () => {
-        
+        //ф-ция возвращает jsx либо для добавления нового клиента, либо для изменения существующего клиента
         return(
             <div>
                 {
-                    (typeof this.props.id == 'number') &&
+                    (this.props.id >= 0) &&
                     <label >Id: {this.props.id}</label>
                 }
                 <div >
@@ -80,16 +83,16 @@ class EditMobileItemComponent extends React.PureComponent{
                 </div>
                 
                 {
-                    (typeof this.props.id !== 'number') && 
+                    (this.props.id < 0) && 
                     <div className="EditItemCardComponent">  
                         <input type='button' value='Сохранить' onClick={this.update}></input>
                         <input type='button' value='Отмена' onClick={this.cancel}></input>
                     </div>
                 }
                 {
-                    (typeof this.props.id == 'number') && 
+                    (this.props.id >= 0) && 
                     <div className="EditItemCardComponent"> 
-                        <input type='button' value='Добавить' onClick={this.save}></input>
+                        <input type='button' value='Добавить' onClick={this.add}></input>
                         <input type='button' value='Отмена' onClick={this.cancel}></input>
                     </div>
                 }
@@ -101,22 +104,28 @@ class EditMobileItemComponent extends React.PureComponent{
         events.emit("stopEditClient", this.props.curClient);
     }
 
+    add = () =>{
+        let newClient = {"id":this.props.curClient.id, "lastName":this.state.lastNameTmp, "firstName":this.state.firstNameTmp, "secondName":this.state.secondNameTmp, "balance":this.state.balanceTmp, "status":this.state.statusTmp};
+        events.emit("updateClient", this.props.curClient, newClient);
+        events.emit("stopEditClient", this.props.curClient);    //по кнопке Сохранить в любом случае убираем режим редактирования
+    }
+
     update = () =>{
         if(this.state.isChange){
             //если что-то меняли, то переписываем всю информацию по клиенту
             let newClient = {"id":this.props.curClient.id, "lastName":this.state.lastNameTmp, "firstName":this.state.firstNameTmp, "secondName":this.state.secondNameTmp, "balance":this.state.balanceTmp, "status":this.state.statusTmp};
             events.emit("updateClient", this.props.curClient, newClient);
         }
-        events.emit("stopEditClient", this.props.curClient);    //по кнопке Сохранить в любом случае убираем режим редактирования
+        events.emit("stopEditClient", this.props.curClient);    //по кнопке Добавить убираем режим редактирования
     }
 
     render(){
+        console.log("render EditMobileItemComponent")
         let body = this.getEditBody()
         return(  
             <div>{body}</div>
         )
     }
-
 }
 
 export default EditMobileItemComponent;

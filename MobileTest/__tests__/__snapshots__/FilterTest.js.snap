@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Проверка фильтров 1`] = `
+<div>
+  <input
+    id="all"
+    onClick={[Function]}
+    type="button"
+    value="Все"
+  />
+  <input
+    id="active"
+    onClick={[Function]}
+    type="button"
+    value="Активные"
+  />
+  <input
+    id="blocked"
+    onClick={[Function]}
+    type="button"
+    value="Заблокирвоанные"
+  />
+</div>
+`;
+
+exports[`Проверка фильтров 2`] = `
+<div>
+  <input
+    id="all"
+    onClick={[Function]}
+    type="button"
+    value="Все"
+  />
+  <input
+    id="active"
+    onClick={[Function]}
+    type="button"
+    value="Активные"
+  />
+  <input
+    id="blocked"
+    onClick={[Function]}
+    type="button"
+    value="Заблокирвоанные"
+  />
+</div>
+`;
+
+exports[`Проверка фильтров 3`] = `
+<div>
+  <input
+    id="all"
+    onClick={[Function]}
+    type="button"
+    value="Все"
+  />
+  <input
+    id="active"
+    onClick={[Function]}
+    type="button"
+    value="Активные"
+  />
+  <input
+    id="blocked"
+    onClick={[Function]}
+    type="button"
+    value="Заблокирвоанные"
+  />
+</div>
+`;
+
+exports[`Проверка фильтров 4`] = `
+<div>
+  <input
+    id="all"
+    onClick={[Function]}
+    type="button"
+    value="Все"
+  />
+  <input
+    id="active"
+    onClick={[Function]}
+    type="button"
+    value="Активные"
+  />
+  <input
+    id="blocked"
+    onClick={[Function]}
+    type="button"
+    value="Заблокирвоанные"
+  />
+</div>
+`;

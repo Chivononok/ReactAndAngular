@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Проверка кнопки Редактировать 1`] = `
+<tr>
+  <td>
+    Петров
+  </td>
+  <td>
+    Петр
+  </td>
+  <td>
+    Петрович
+  </td>
+  <td>
+    250
+  </td>
+  <td>
+    1
+  </td>
+  <td>
+    <input
+      disabled={false}
+      id="edit"
+      onClick={[Function]}
+      type="button"
+      value="Редактировать"
+    />
+  </td>
+  <td>
+    <input
+      disabled={false}
+      id="delete"
+      onClick={[Function]}
+      type="button"
+      value="Удалить"
+    />
+  </td>
+</tr>
+`;
+
+exports[`Проверка кнопки Редактировать 2`] = `
+<tr>
+  <td>
+    Петров
+  </td>
+  <td>
+    Петр
+  </td>
+  <td>
+    Петрович
+  </td>
+  <td>
+    250
+  </td>
+  <td>
+    1
+  </td>
+  <td>
+    <input
+      disabled={false}
+      id="edit"
+      onClick={[Function]}
+      type="button"
+      value="Редактировать"
+    />
+  </td>
+  <td>
+    <input
+      disabled={false}
+      id="delete"
+      onClick={[Function]}
+      type="button"
+      value="Удалить"
+    />
+  </td>
+</tr>
+`;
+
+exports[`Проверка кнопки Редактировать 3`] = `
+<tr>
+  <td>
+    Петров
+  </td>
+  <td>
+    Петр
+  </td>
+  <td>
+    Петрович
+  </td>
+  <td>
+    250
+  </td>
+  <td>
+    1
+  </td>
+  <td>
+    <input
+      disabled={false}
+      id="edit"
+      onClick={[Function]}
+      type="button"
+      value="Редактировать"
+    />
+  </td>
+  <td>
+    <input
+      disabled={false}
+      id="delete"
+      onClick={[Function]}
+      type="button"
+      value="Удалить"
+    />
+  </td>
+</tr>
+`;
